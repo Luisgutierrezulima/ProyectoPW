@@ -16,6 +16,9 @@ export default function Navbar() {
             <li className="nav-item"><Link className="nav-link" to="/">Home</Link></li>
             <li className="nav-item"><Link className="nav-link" to="/platform">Platform</Link></li>
             <li className="nav-item"><Link className="nav-link" to="/offers">Special Offers</Link></li>
+            <li className="nav-item"><Link className="nav-link" to="/mejor-valorados">Mejores Valorados</Link></li>
+            <li className="nav-item"><Link className="nav-link" to="/cart">🛒 Ver Carrito</Link></li>
+            <li className="nav-item"><Link className="nav-link" to="/admin/noticias"> Noticias</Link></li>
           </ul>
           <button className="btn btn-outline-light me-2"><i className="bi bi-person-circle"></i></button>
           <button className="btn btn-outline-light"><i className="bi bi-search"></i></button>
