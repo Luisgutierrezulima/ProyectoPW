@@ -1,0 +1,1 @@
+import '../paginas/style.css';
