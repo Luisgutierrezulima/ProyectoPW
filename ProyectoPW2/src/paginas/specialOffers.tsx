@@ -25,9 +25,9 @@ export default function SpecialOffers() {
               <div className="col" key={juego.id}>
                 <CardJuego
                   nombre={juego.titulo}
-                  imagen={juego.imagenes[0]}
+                  imagen={juego.imagen}
                   precio={juego.precio}
-                  onDetalles={() => navigate(`/game/${juego.id}`)}
+                  onDetalles={() => navigate(`/detalle/${juego.id}`)}
                 />
               </div>
             ))}

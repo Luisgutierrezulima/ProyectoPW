@@ -11,8 +11,6 @@ export default function Cart() {
   const { carrito, aumentarCantidad, disminuirCantidad, eliminarJuego } = useCarrito();
   const navigate = useNavigate();
 
-  console.log("Carrito actual:", carrito);
-
   const totalPagar = carrito.reduce(
     (acc, item) => acc + item.precio * item.cantidad,
     0
@@ -85,8 +83,8 @@ export default function Cart() {
             <div className="col-md-4 bg-dark-2 p-4 rounded">
               <h5 className="texto-acento">Resumen</h5>
               <hr className="border-light" />
-              <p>Total a pagar:</p>
-              <h4>${totalPagar}</h4>
+              <p className="text-light">Total a pagar:</p>
+              <h4 className="text-light">${totalPagar}</h4>
               <button className="btn btn-acento w-100 mt-3" onClick={() => navigate('/pago')}> Finalizar Compra </button>
             </div>
           </div>

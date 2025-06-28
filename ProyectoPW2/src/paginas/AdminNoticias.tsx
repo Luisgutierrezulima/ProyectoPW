@@ -1,43 +1,92 @@
-import React, { useState } from 'react';
-import type { Noticia } from '../types/Noticia';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../componentes/Navbar';
 
+interface Noticia {
+  id: number;
+  titulo: string;
+  contenido: string;
+  fecha: string;
+}
 
 export default function AdminNoticias() {
   const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [titulo, setTitulo] = useState('');
   const [contenido, setContenido] = useState('');
   const [modoEdicion, setModoEdicion] = useState<null | number>(null);
+  const [mensaje, setMensaje] = useState('');
+  const [error, setError] = useState('');
 
-  const agregarNoticia = () => {
-    const nueva: Noticia = {
-      id: Date.now(),
-      titulo,
-      contenido,
-      fecha: new Date().toISOString().split('T')[0],
-    };
-    setNoticias([...noticias, nueva]);
-    setTitulo('');
-    setContenido('');
+  // Cargar noticias del backend
+  const cargarNoticias = async () => {
+    const res = await fetch('http://localhost:3001/api/noticias');
+    setNoticias(await res.json());
   };
 
-  const eliminarNoticia = (id: number) => {
-    setNoticias(noticias.filter((n) => n.id !== id));
+  useEffect(() => {
+    cargarNoticias();
+  }, []);
+
+  const agregarNoticia = async () => {
+    setMensaje('');
+    setError('');
+    if (!titulo || !contenido) {
+      setError('Completa todos los campos.');
+      return;
+    }
+    const res = await fetch('http://localhost:3001/api/noticias', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ titulo, contenido }),
+    });
+    if (res.ok) {
+      setTitulo('');
+      setContenido('');
+      setMensaje('Noticia agregada.');
+      cargarNoticias();
+    } else {
+      setError('Error al agregar noticia.');
+    }
   };
 
-  const guardarEdicion = () => {
-    setNoticias(noticias.map((n) =>
-      n.id === modoEdicion ? { ...n, titulo, contenido } : n
-    ));
-    setModoEdicion(null);
-    setTitulo('');
-    setContenido('');
+  const eliminarNoticia = async (id: number) => {
+    setMensaje('');
+    setError('');
+    const res = await fetch(`http://localhost:3001/api/noticias/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      setMensaje('Noticia eliminada.');
+      cargarNoticias();
+    } else {
+      setError('Error al eliminar noticia.');
+    }
   };
 
   const comenzarEdicion = (noticia: Noticia) => {
     setModoEdicion(noticia.id);
     setTitulo(noticia.titulo);
     setContenido(noticia.contenido);
+  };
+
+  const guardarEdicion = async () => {
+    setMensaje('');
+    setError('');
+    if (!titulo || !contenido || !modoEdicion) {
+      setError('Completa todos los campos.');
+      return;
+    }
+    const res = await fetch(`http://localhost:3001/api/noticias/${modoEdicion}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ titulo, contenido }),
+    });
+    if (res.ok) {
+      setModoEdicion(null);
+      setTitulo('');
+      setContenido('');
+      setMensaje('Noticia editada.');
+      cargarNoticias();
+    } else {
+      setError('Error al editar noticia.');
+    }
   };
 
   return (
@@ -71,6 +120,9 @@ export default function AdminNoticias() {
             </button>
           )}
         </div>
+
+        {mensaje && <div className="alert alert-success">{mensaje}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
 
         <hr />
 

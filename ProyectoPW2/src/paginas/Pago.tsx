@@ -7,22 +7,39 @@ export default function Pago() {
   const [email, setEmail] = useState('');
   const [enviado, setEnviado] = useState(false);
   const [error, setError] = useState('');
+  const [claves, setClaves] = useState<string[]>([]);
 
   const total = carrito.reduce(
     (acc, item) => acc + item.precio * item.cantidad,
     0
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
       setError('Por favor ingresa un correo válido.');
       return;
     }
     setError('');
-    setEnviado(true);
-    
+
+    const userId = localStorage.getItem('userId');
+
+    // Llama al backend para procesar el pago y enviar las claves
+    const res = await fetch('http://localhost:3001/api/pago', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, carrito, email }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setClaves(data.claves || []);
+      setEnviado(true);
+      // Aquí podrías limpiar el carrito si lo deseas
+    } else {
+      setError('Error al procesar el pago. Intenta nuevamente.');
+    }
   };
 
   return (
@@ -36,6 +53,13 @@ export default function Pago() {
           ) : enviado ? (
             <div className="alert alert-success">
               ¡Pago realizado con éxito! Las claves serán enviadas a <b>{email}</b>.
+              {claves.length > 0 && (
+                <ul className="mt-3">
+                  {claves.map((clave, idx) => (
+                    <li key={idx}>{clave}</li>
+                  ))}
+                </ul>
+              )}
             </div>
           ) : (
             <form onSubmit={handleSubmit}>

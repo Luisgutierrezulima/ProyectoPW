@@ -19,11 +19,13 @@ model Juego {
   id          Int      @id @default(autoincrement())
   titulo      String
   descripcion String
-  estrellas   Int
+  estrellas   Int      @default(0)
   imagen      String
   trailer     String
   precio      Float
   oferta      Boolean  @default(false)
+  plataforma  String
+  categoria   String
   resenas     Resena[]
 }
 
@@ -35,3 +37,18 @@ model Resena {
   juegoId   Int
   juego     Juego  @relation(fields: [juegoId], references: [id])
 }
+
+model Usuario {
+  id       Int    @id @default(autoincrement())
+  nombre   String
+  email    String @unique
+  password String
+}
+
+model Noticia {
+  id        Int    @id @default(autoincrement())
+  titulo    String
+  contenido String
+  fecha     String
+}
+

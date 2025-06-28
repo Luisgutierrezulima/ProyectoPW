@@ -3,9 +3,6 @@ import Navbar from '../componentes/Navbar';
 import CardJuego from '../componentes/CardJuego';
 import { useNavigate } from 'react-router-dom';
 import { useJuegos } from '../context/GameContext';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../paginas/style.css';
 
 export default function PaginaPrincipal() {
@@ -44,13 +41,13 @@ export default function PaginaPrincipal() {
       <div className="container mt-5">
         <h3 className="texto-acento mb-3">Featured Games</h3>
         <div className="row row-cols-1 row-cols-md-5 g-4 mt-3">
-          {juegos.map((juego) => (
+          {juegos.slice(0, 5).map((juego) => (
             <div className="col" key={juego.id}>
               <CardJuego 
                 nombre={juego.titulo} 
-                imagen={juego.imagenes[0]}
+                imagen={juego.imagen}
                 precio={juego.precio}
-                onDetalles={() => navigate(`/game/${juego.id}`)} 
+                onDetalles={() => navigate(`/detalle/${juego.id}`)} 
               />
             </div>
           ))}

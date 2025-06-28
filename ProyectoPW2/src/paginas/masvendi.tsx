@@ -9,7 +9,11 @@ export default function MasVendi() {
   const { juegos } = useJuegos();
   const navigate = useNavigate();
 
-  const masVendidos = juegos.filter(j => j.estrellas >= 4.5);
+  // Definir criterio de "más vendidos"
+  // Por ejemplo, los juegos con más estrellas o los primeros N juegos
+  const masVendidos = juegos
+    .filter(j => j.estrellas >= 4.5) // Ajusta el criterio según tu modelo
+    .slice(0, 8); // Muestra los 8 más vendidos
 
   return (
     <>
@@ -21,9 +25,9 @@ export default function MasVendi() {
             <div className="col" key={juego.id}>
               <CardJuego
                 nombre={juego.titulo}
-                imagen={juego.imagenes[0]}
+                imagen={juego.imagen}
                 precio={juego.precio}
-                onDetalles={() => navigate(`/game/${juego.id}`)}
+                onDetalles={() => navigate(`/detalle/${juego.id}`)}
               />
             </div>
           ))}

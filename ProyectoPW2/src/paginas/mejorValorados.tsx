@@ -9,8 +9,8 @@ export default function MejorValorados() {
   const { juegos } = useJuegos();
   const navigate = useNavigate();
 
-  // Filtrar los juegos con 5 estrellas (puedes ajustar el criterio)
-  const mejorValorados = juegos.filter(j => j.estrellas >= 5);
+  // Filtrar los juegos con 5 estrellas
+  const mejorValorados = juegos.filter(j => j.estrellas >= 4);
 
   return (
     <>
@@ -22,12 +22,10 @@ export default function MejorValorados() {
             <div className="col" key={juego.id}>
               <CardJuego
                 nombre={juego.titulo}
-                imagen={juego.imagenes[0]}
+                imagen={juego.imagen}
                 precio={juego.precio}
-                onDetalles={() => navigate(`/game/${juego.id}`)}
-                
+                onDetalles={() => navigate(`/detalle/${juego.id}`)}
               />
-              
             </div>
           ))}
         </div>
