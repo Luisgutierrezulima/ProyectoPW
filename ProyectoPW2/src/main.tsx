@@ -33,7 +33,8 @@ createRoot(document.getElementById('root')!).render(
     <CarritoProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<PaginaPrincipal />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/tienda" element={<PaginaPrincipal />} />
           <Route path="/admin/configjuegos" element={<Configjuegos />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/game/:id" element={<GameDetail />} />

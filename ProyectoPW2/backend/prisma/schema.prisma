@@ -32,11 +32,13 @@ model Juego {
 
 // Modelo para las reseñas
 model Resena {
-  id        Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   texto     String
   estrellas Int
   juegoId   Int
-  juego     Juego  @relation(fields: [juegoId], references: [id])
+  userId    Int
+  juego     Juego    @relation(fields: [juegoId], references: [id])
+  usuario   Usuario  @relation(fields: [userId], references: [id])
 }
 
 model Usuario {
@@ -46,6 +48,7 @@ model Usuario {
   password String
   carrito  CarritoItem[]
   compras  Compra[] 
+  resenas   Resena[]
 }
 
 model Noticia {

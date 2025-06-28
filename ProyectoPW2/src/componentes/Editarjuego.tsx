@@ -5,6 +5,15 @@ type EditarJuegoProps = {
   onFinish: () => void;
 };
 
+const categorias = [
+  'Acción', 'Aventura', 'Estrategia', 'RPG', 'Deportes',
+  'Simulación', 'Puzzle', 'Terror', 'Mundo Abierto', 'Multijugador'
+];
+
+const plataformas = [
+  'PlayStation 4', 'PlayStation 5', 'Nintendo Switch', 'Windows', 'macOS', 'Xbox'
+];
+
 const EditarJuego: React.FC<EditarJuegoProps> = ({ id, onFinish }) => {
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
@@ -108,11 +117,21 @@ const EditarJuego: React.FC<EditarJuegoProps> = ({ id, onFinish }) => {
         </div>
         <div className="col-md-4">
           <label className="form-label">Plataforma*</label>
-          <input type="text" className="form-control form-control-sm" value={plataforma} onChange={e => setPlataforma(e.target.value)} />
+          <select className="form-select form-select-sm" value={plataforma} onChange={e => setPlataforma(e.target.value)}>
+            <option value="">Selecciona una plataforma</option>
+            {plataformas.map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
         </div>
         <div className="col-md-4">
           <label className="form-label">Categoría*</label>
-          <input type="text" className="form-control form-control-sm" value={categoria} onChange={e => setCategoria(e.target.value)} />
+          <select className="form-select form-select-sm" value={categoria} onChange={e => setCategoria(e.target.value)}>
+            <option value="">Selecciona una categoría</option>
+            {categorias.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
         </div>
         <div className="col-md-12">
           <label className="form-label">Descripción*</label>
@@ -126,5 +145,4 @@ const EditarJuego: React.FC<EditarJuegoProps> = ({ id, onFinish }) => {
     </div>
   );
 };
-
 export default EditarJuego;

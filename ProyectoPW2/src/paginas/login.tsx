@@ -23,7 +23,7 @@ const Login: React.FC = () => {
       localStorage.setItem('userId', data.userId);
       localStorage.setItem('userName', data.nombre);
       localStorage.setItem('userEmail', data.email);
-      navigate('/');
+      navigate('/tienda');
     } else {
       setError(data.error || 'Error de autenticación');
     }

@@ -32,7 +32,7 @@ export default function Pago() {
       setClaves(data.claves || []);
       setEnviado(true);
       setProcesandoPago(false);
-      // Aquí podrías limpiar el carrito si lo deseas
+      // Limpiar el carrito después del pago
     } else {
       setError('Error al procesar el pago. Intenta nuevamente.');
       setProcesandoPago(false);
@@ -70,7 +70,7 @@ export default function Pago() {
               )}
               <button
                 className="btn btn-acento mt-3"
-                onClick={() => window.location.href = '/'}
+                onClick={() => window.location.href = '/tienda'}
               >
                 Volver a la página principal
               </button>

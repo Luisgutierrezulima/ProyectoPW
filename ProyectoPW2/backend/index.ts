@@ -55,11 +55,21 @@ app.get('/api/perfil/:id', async (req: Request, res: Response) => {
 // Obtener todos los juegos
 app.get('/api/juegos', async (req: Request, res: Response) => {
   const juegos = await prisma.juego.findMany({
-    include: { resenas: true }
+    include: {
+      resenas: {
+        include: { usuario: true }
+      }
+    }
   });
+  // Mapear para que cada reseña tenga el campo usuario (nombre)
   const juegosConResenas = juegos.map((j: any) => ({
     ...j,
-    resenas: j.resenas || []
+    resenas: (j.resenas || []).map((r: any) => ({
+      id: r.id,
+      texto: r.texto,
+      estrellas: r.estrellas,
+      usuario: r.usuario?.nombre || 'Usuario'
+    }))
   }));
   res.json(juegosConResenas);
 });
@@ -362,7 +372,7 @@ app.post('/api/juegos/:juegoId/resena', async (req: Request, res: Response) => {
 
   const usuario = await prisma.usuario.findUnique({ where: { id: Number(userId) } });
   const resena = await prisma.resena.create({
-    data: { juegoId, texto, estrellas }
+    data: { juegoId, texto, estrellas, userId: Number(userId) }
   });
   res.json({ ...resena, usuario: usuario?.nombre || 'Usuario' });
 });
@@ -370,8 +380,17 @@ app.post('/api/juegos/:juegoId/resena', async (req: Request, res: Response) => {
 // Obtener reseñas de un juego
 app.get('/api/juegos/:juegoId/resenas', async (req: Request, res: Response) => {
   const juegoId = Number(req.params.juegoId);
-  const resenas = await prisma.resena.findMany({ where: { juegoId } });
-  res.json(resenas);
+  const resenas = await prisma.resena.findMany({
+    where: { juegoId },
+    include: { usuario: true }
+  });
+  const resenasConUsuario = resenas.map((r: any) => ({
+    id: r.id,
+    texto: r.texto,
+    estrellas: r.estrellas,
+    usuario: r.usuario?.nombre || 'Usuario'
+  }));
+  res.json(resenasConUsuario);
 });
 
 // Agregar aquí más endpoints, app.listen siempre debe ir al FINAL!!!!
