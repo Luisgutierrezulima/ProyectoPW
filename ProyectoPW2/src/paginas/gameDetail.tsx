@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '../componentes/Navbar';
+import { useCarrito } from '../context/CarritoContext';
 
 interface Reseña {
   id: number;
@@ -33,6 +34,7 @@ export default function GameDetail() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const userId = localStorage.getItem('userId');
+  const { agregarJuego } = useCarrito();
 
   // Cargar detalles del juego
   useEffect(() => {
@@ -77,6 +79,17 @@ export default function GameDetail() {
     }
   };
 
+  const handleComprar = () => {
+    if (!juego) return;
+    agregarJuego({
+      id: juego.id,
+      nombre: juego.titulo,
+      imagen: juego.imagen,
+      precio: juego.precio,
+      cantidad: 1,
+    });
+  };
+
   if (!juego) return <div className="text-white">Cargando...</div>;
 
   return (
@@ -102,6 +115,16 @@ export default function GameDetail() {
               style={{ width: "100%", height: "100%" }}
             ></iframe>
           </div>
+        </div>
+
+        {/* Botón de comprar */}
+        <div className="d-flex justify-content-center mb-4">
+          <button
+            className="btn btn-acento btn-lg"
+            onClick={handleComprar}
+          >
+            Comprar
+          </button>
         </div>
 
         {/* Área de reseñas */}

@@ -1,31 +1,26 @@
 import React, { useState } from 'react';
+import ModalPago from '../componentes/ModalPago';
 import Navbar from '../componentes/Navbar';
 import { useCarrito } from '../context/CarritoContext';
 
 export default function Pago() {
+  const [mostrarModal, setMostrarModal] = useState(false);
   const { carrito } = useCarrito();
   const [email, setEmail] = useState('');
   const [enviado, setEnviado] = useState(false);
   const [error, setError] = useState('');
   const [claves, setClaves] = useState<string[]>([]);
+  const [procesandoPago, setProcesandoPago] = useState(false);
 
   const total = carrito.reduce(
     (acc, item) => acc + item.precio * item.cantidad,
     0
   );
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
-      setError('Por favor ingresa un correo válido.');
-      return;
-    }
-    setError('');
-
+  // Nuevo: Procesar pago después de simular tarjeta
+  const procesarPago = async () => {
+    setProcesandoPago(true);
     const userId = localStorage.getItem('userId');
-
-    // Llama al backend para procesar el pago y enviar las claves
     const res = await fetch('http://localhost:3001/api/pago', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -36,10 +31,23 @@ export default function Pago() {
       const data = await res.json();
       setClaves(data.claves || []);
       setEnviado(true);
+      setProcesandoPago(false);
       // Aquí podrías limpiar el carrito si lo deseas
     } else {
       setError('Error al procesar el pago. Intenta nuevamente.');
+      setProcesandoPago(false);
     }
+  };
+
+  // Nuevo: Al enviar el formulario, mostrar modal de tarjeta
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    if (!email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+      setError('Por favor ingresa un correo válido.');
+      return;
+    }
+    setMostrarModal(true);
   };
 
   return (
@@ -60,6 +68,12 @@ export default function Pago() {
                   ))}
                 </ul>
               )}
+              <button
+                className="btn btn-acento mt-3"
+                onClick={() => window.location.href = '/'}
+              >
+                Volver a la página principal
+              </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
@@ -96,13 +110,22 @@ export default function Pago() {
                 />
                 {error && <div className="text-danger mt-2">{error}</div>}
               </div>
-              <button type="submit" className="btn btn-acento w-100">
-                Pagar y recibir claves
+              <button type="submit" className="btn btn-acento w-100" disabled={procesandoPago}>
+                {procesandoPago ? 'Procesando pago...' : 'Pagar y recibir claves'}
               </button>
             </form>
           )}
         </div>
       </div>
+      {/* Modal para simular pago con tarjeta */}
+      <ModalPago
+        mostrar={mostrarModal}
+        onCerrar={() => setMostrarModal(false)}
+        onProcesar={() => {
+          setMostrarModal(false);
+          procesarPago();
+        }}
+      />
     </>
   );
 }

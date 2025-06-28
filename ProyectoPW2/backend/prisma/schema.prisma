@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -27,6 +26,8 @@ model Juego {
   plataforma  String
   categoria   String
   resenas     Resena[]
+  carrito     CarritoItem[]
+  comprasDetalle CompraDetalle[] 
 }
 
 // Modelo para las reseñas
@@ -43,6 +44,8 @@ model Usuario {
   nombre   String
   email    String @unique
   password String
+  carrito  CarritoItem[]
+  compras  Compra[] 
 }
 
 model Noticia {
@@ -52,3 +55,29 @@ model Noticia {
   fecha     String
 }
 
+model CarritoItem {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  juegoId   Int
+  cantidad  Int     @default(1)
+  usuario   Usuario @relation(fields: [userId], references: [id])
+  juego     Juego   @relation(fields: [juegoId], references: [id])
+}
+
+model Compra {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  fecha     DateTime @default(now())
+  usuario   Usuario  @relation(fields: [userId], references: [id])
+  detalles  CompraDetalle[]
+}
+
+model CompraDetalle {
+  id        Int      @id @default(autoincrement())
+  compraId  Int
+  juegoId   Int
+  cantidad  Int
+  clave     String
+  compra    Compra   @relation(fields: [compraId], references: [id])
+  juego     Juego    @relation(fields: [juegoId], references: [id])
+}

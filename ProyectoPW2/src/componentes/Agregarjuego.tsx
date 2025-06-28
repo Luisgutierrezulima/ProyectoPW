@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
-const Agregarjuego = () => {
+type AgregarJuegoProps = {
+  onFinish: () => void;
+};
+
+const Agregarjuego: React.FC<AgregarJuegoProps> = ({ onFinish }) => {
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [estrellas, setEstrellas] = useState(0);
@@ -17,12 +21,10 @@ const Agregarjuego = () => {
     e.preventDefault();
     setMensaje('');
     setError('');
-
     if (!titulo || !descripcion || !imagen || !trailer || !precio || !plataforma || !categoria) {
       setError('Completa todos los campos obligatorios.');
       return;
     }
-
     const res = await fetch('http://localhost:3001/api/juegos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -38,18 +40,9 @@ const Agregarjuego = () => {
         categoria,
       }),
     });
-
     if (res.ok) {
       setMensaje('¡Juego agregado exitosamente!');
-      setTitulo('');
-      setDescripcion('');
-      setEstrellas(0);
-      setImagen('');
-      setTrailer('');
-      setPrecio('');
-      setOferta(false);
-      setPlataforma('');
-      setCategoria('');
+      setTimeout(() => onFinish(), 1000);
     } else {
       const data = await res.json();
       setError(data.error || 'Error al agregar el juego.');
@@ -99,7 +92,8 @@ const Agregarjuego = () => {
           <textarea className="form-control form-control-sm" value={descripcion} onChange={e => setDescripcion(e.target.value)} />
         </div>
         <div className="col-auto">
-          <button className="btn btn-success btn-sm" type="submit">Añadir</button>
+          <button className="btn btn-success btn-sm" type="submit">Agregar Juego</button>
+          <button className="btn btn-secondary btn-sm ms-2" type="button" onClick={onFinish}>Cancelar</button>
         </div>
       </form>
     </div>

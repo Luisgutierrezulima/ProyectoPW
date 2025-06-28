@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 
-const AgregarDescuento = () => {
-  const [id, setId] = useState('');
+type AgregarDescuentoProps = {
+  id: number;
+  onFinish: () => void;
+};
+
+const AgregarDescuento: React.FC<AgregarDescuentoProps> = ({ id, onFinish }) => {
   const [porcentaje, setPorcentaje] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
@@ -10,8 +14,8 @@ const AgregarDescuento = () => {
     e.preventDefault();
     setMensaje('');
     setError('');
-    if (!id || !porcentaje) {
-      setError('Completa todos los campos.');
+    if (!porcentaje) {
+      setError('Completa el porcentaje.');
       return;
     }
     const resJuego = await fetch(`http://localhost:3001/api/juegos/${id}`);
@@ -32,8 +36,7 @@ const AgregarDescuento = () => {
     });
     if (res.ok) {
       setMensaje('¡Descuento aplicado exitosamente!');
-      setId('');
-      setPorcentaje('');
+      setTimeout(() => onFinish(), 1000);
     } else {
       const data = await res.json();
       setError(data.error || 'Error al aplicar el descuento.');
@@ -46,15 +49,6 @@ const AgregarDescuento = () => {
       {mensaje && <div className="alert alert-success">{mensaje}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
       <form className="row g-3" onSubmit={handleDescuento}>
-        <div className="col-md-4">
-          <label className="form-label">ID del juego*</label>
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            value={id}
-            onChange={e => setId(e.target.value)}
-          />
-        </div>
         <div className="col-md-4">
           <label className="form-label">% Descuento*</label>
           <input
@@ -69,6 +63,9 @@ const AgregarDescuento = () => {
         <div className="col-auto">
           <button className="btn btn-success btn-sm" type="submit">
             Aplicar Descuento
+          </button>
+          <button className="btn btn-secondary btn-sm ms-2" type="button" onClick={onFinish}>
+            Cancelar
           </button>
         </div>
       </form>

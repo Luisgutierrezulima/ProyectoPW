@@ -1,0 +1,9 @@
+-- CreateTable
+CREATE TABLE "CarritoItem" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "userId" INTEGER NOT NULL,
+    "juegoId" INTEGER NOT NULL,
+    "cantidad" INTEGER NOT NULL DEFAULT 1,
+    CONSTRAINT "CarritoItem_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "CarritoItem_juegoId_fkey" FOREIGN KEY ("juegoId") REFERENCES "Juego" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);

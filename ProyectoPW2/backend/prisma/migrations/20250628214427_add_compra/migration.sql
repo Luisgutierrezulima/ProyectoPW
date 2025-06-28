@@ -1,0 +1,18 @@
+-- CreateTable
+CREATE TABLE "Compra" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "userId" INTEGER NOT NULL,
+    "fecha" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Compra_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "CompraDetalle" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "compraId" INTEGER NOT NULL,
+    "juegoId" INTEGER NOT NULL,
+    "cantidad" INTEGER NOT NULL,
+    "clave" TEXT NOT NULL,
+    CONSTRAINT "CompraDetalle_compraId_fkey" FOREIGN KEY ("compraId") REFERENCES "Compra" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "CompraDetalle_juegoId_fkey" FOREIGN KEY ("juegoId") REFERENCES "Juego" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);

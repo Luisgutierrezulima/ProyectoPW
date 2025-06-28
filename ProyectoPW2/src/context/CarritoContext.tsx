@@ -1,89 +1,117 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-export interface JuegoCarrito {
+export type CarritoItem = {
   id: number;
   nombre: string;
   imagen: string;
   precio: number;
   cantidad: number;
-}
-
-interface CarritoContextType {
-  carrito: JuegoCarrito[];
-  agregarJuego: (juego: Omit<JuegoCarrito, 'cantidad'>) => Promise<void>;
-  eliminarJuego: (id: number) => Promise<void>;
-  aumentarCantidad: (id: number) => Promise<void>;
-  disminuirCantidad: (id: number) => Promise<void>;
-}
-
-const CarritoContext = createContext<CarritoContextType | undefined>(undefined);
-
-export const useCarrito = () => {
-  const context = useContext(CarritoContext);
-  if (!context) {
-    throw new Error('useCarrito debe usarse dentro de un CarritoProvider');
-  }
-  return context;
 };
 
-export const CarritoProvider = ({ children }: { children: React.ReactNode }) => {
-  const [carrito, setCarrito] = useState<JuegoCarrito[]>([]);
-  // Reemplazar esto por lógica real de autenticación
-  const userId = localStorage.getItem('userId') || 'demoUser';
+type CarritoContextType = {
+  carrito: CarritoItem[];
+  cargarCarrito: () => Promise<void>;
+  agregarJuego: (item: CarritoItem) => Promise<void>;
+  aumentarCantidad: (id: number) => Promise<void>;
+  disminuirCantidad: (id: number) => Promise<void>;
+  eliminarJuego: (id: number) => Promise<void>;
+  limpiarCarrito: () => Promise<void>;
+};
 
-  // Cargar carrito al iniciar
-  useEffect(() => {
+const CarritoContext = createContext<CarritoContextType>({
+  carrito: [],
+  cargarCarrito: async () => {},
+  agregarJuego: async () => {},
+  aumentarCantidad: async () => {},
+  disminuirCantidad: async () => {},
+  eliminarJuego: async () => {},
+  limpiarCarrito: async () => {},
+});
+
+export const useCarrito = () => useContext(CarritoContext);
+
+export const CarritoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [carrito, setCarrito] = useState<CarritoItem[]>([]);
+  const userId = localStorage.getItem('userId');
+
+  // Cargar carrito desde el backend
+  const cargarCarrito = async () => {
     if (!userId) return;
-    fetch(`http://localhost:3001/api/carrito?userId=${userId}`)
-      .then(res => res.json())
-      .then(setCarrito);
+    const res = await fetch(`http://localhost:3001/api/carrito/${userId}`);
+    if (res.ok) {
+      setCarrito(await res.json());
+    }
+  };
+
+  useEffect(() => {
+    cargarCarrito();
+    // eslint-disable-next-line
   }, [userId]);
 
-  // Función para refrescar el carrito después de cada operación
-  const actualizarCarrito = async () => {
-    const res = await fetch(`http://localhost:3001/api/carrito?userId=${userId}`);
-    setCarrito(await res.json());
-  };
-
-  const agregarJuego = async (juego: Omit<JuegoCarrito, 'cantidad'>) => {
-    await fetch('http://localhost:3001/api/carrito/agregar', {
+  // Agregar juego al carrito
+  const agregarJuego = async (item: CarritoItem) => {
+    if (!userId) return;
+    await fetch(`http://localhost:3001/api/carrito/${userId}/agregar`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, juego }),
+      body: JSON.stringify(item),
     });
-    await actualizarCarrito();
+    await cargarCarrito();
   };
 
-  const eliminarJuego = async (id: number) => {
-    await fetch('http://localhost:3001/api/carrito/eliminar', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, juegoId: id }),
-    });
-    await actualizarCarrito();
-  };
-
+  // Aumentar cantidad
   const aumentarCantidad = async (id: number) => {
-    await fetch('http://localhost:3001/api/carrito/aumentar', {
+    if (!userId) return;
+    await fetch(`http://localhost:3001/api/carrito/${userId}/aumentar`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, juegoId: id }),
+      body: JSON.stringify({ id }),
     });
-    await actualizarCarrito();
+    await cargarCarrito();
   };
 
+  // Disminuir cantidad
   const disminuirCantidad = async (id: number) => {
-    await fetch('http://localhost:3001/api/carrito/disminuir', {
+    if (!userId) return;
+    await fetch(`http://localhost:3001/api/carrito/${userId}/disminuir`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, juegoId: id }),
+      body: JSON.stringify({ id }),
     });
-    await actualizarCarrito();
+    await cargarCarrito();
+  };
+
+  // Eliminar juego
+  const eliminarJuego = async (id: number) => {
+    if (!userId) return;
+    await fetch(`http://localhost:3001/api/carrito/${userId}/eliminar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    await cargarCarrito();
+  };
+
+  // Limpiar carrito
+  const limpiarCarrito = async () => {
+    if (!userId) return;
+    await fetch(`http://localhost:3001/api/carrito/${userId}/limpiar`, {
+      method: 'POST',
+    });
+    await cargarCarrito();
   };
 
   return (
     <CarritoContext.Provider
-      value={{ carrito, agregarJuego, eliminarJuego, aumentarCantidad, disminuirCantidad }}
+      value={{
+        carrito,
+        cargarCarrito,
+        agregarJuego,
+        aumentarCantidad,
+        disminuirCantidad,
+        eliminarJuego,
+        limpiarCarrito,
+      }}
     >
       {children}
     </CarritoContext.Provider>

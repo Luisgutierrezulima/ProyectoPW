@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const EditarJuego = () => {
-  const [id, setId] = useState('');
+type EditarJuegoProps = {
+  id: number;
+  onFinish: () => void;
+};
+
+const EditarJuego: React.FC<EditarJuegoProps> = ({ id, onFinish }) => {
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [estrellas, setEstrellas] = useState(0);
@@ -14,37 +18,37 @@ const EditarJuego = () => {
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
 
-  // Cargar datos del juego al ingresar el ID
-  const cargarJuego = async () => {
-    setMensaje('');
-    setError('');
-    if (!id) {
-      setError('Ingresa el ID del juego.');
-      return;
-    }
-    const res = await fetch(`http://localhost:3001/api/juegos/${id}`);
-    if (res.ok) {
-      const juego = await res.json();
-      setTitulo(juego.titulo);
-      setDescripcion(juego.descripcion);
-      setEstrellas(juego.estrellas);
-      setImagen(juego.imagen);
-      setTrailer(juego.trailer);
-      setPrecio(juego.precio.toString());
-      setOferta(juego.oferta);
-      setPlataforma(juego.plataforma);
-      setCategoria(juego.categoria);
-      setMensaje('Juego cargado. Puedes editar los campos.');
-    } else {
-      setError('No se encontró el juego con ese ID.');
-    }
-  };
+  // Cargar datos del juego al montar el componente
+  useEffect(() => {
+    const cargarJuego = async () => {
+      setMensaje('');
+      setError('');
+      const res = await fetch(`http://localhost:3001/api/juegos/${id}`);
+      if (res.ok) {
+        const juego = await res.json();
+        setTitulo(juego.titulo);
+        setDescripcion(juego.descripcion);
+        setEstrellas(juego.estrellas);
+        setImagen(juego.imagen);
+        setTrailer(juego.trailer);
+        setPrecio(juego.precio.toString());
+        setOferta(juego.oferta);
+        setPlataforma(juego.plataforma);
+        setCategoria(juego.categoria);
+        setMensaje('Juego cargado. Puedes editar los campos.');
+      } else {
+        setError('No se encontró el juego con ese ID.');
+      }
+    };
+    cargarJuego();
+    // eslint-disable-next-line
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMensaje('');
     setError('');
-    if (!id || !titulo || !descripcion || !imagen || !trailer || !precio || !plataforma || !categoria) {
+    if (!titulo || !descripcion || !imagen || !trailer || !precio || !plataforma || !categoria) {
       setError('Completa todos los campos obligatorios.');
       return;
     }
@@ -65,6 +69,7 @@ const EditarJuego = () => {
     });
     if (res.ok) {
       setMensaje('¡Juego actualizado exitosamente!');
+      setTimeout(() => onFinish(), 1000);
     } else {
       const data = await res.json();
       setError(data.error || 'Error al actualizar el juego.');
@@ -77,11 +82,6 @@ const EditarJuego = () => {
       {mensaje && <div className="alert alert-success">{mensaje}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
       <form className="row g-3" onSubmit={handleSubmit}>
-        <div className="col-md-3">
-          <label className="form-label">ID del juego*</label>
-          <input type="text" className="form-control form-control-sm" value={id} onChange={e => setId(e.target.value)} />
-          <button type="button" className="btn btn-primary btn-sm mt-2" onClick={cargarJuego}>Cargar</button>
-        </div>
         <div className="col-md-6">
           <label className="form-label">Título*</label>
           <input type="text" className="form-control form-control-sm" value={titulo} onChange={e => setTitulo(e.target.value)} />
@@ -120,6 +120,7 @@ const EditarJuego = () => {
         </div>
         <div className="col-auto">
           <button className="btn btn-primary btn-sm" type="submit">Guardar Cambios</button>
+          <button className="btn btn-secondary btn-sm ms-2" type="button" onClick={onFinish}>Cancelar</button>
         </div>
       </form>
     </div>
