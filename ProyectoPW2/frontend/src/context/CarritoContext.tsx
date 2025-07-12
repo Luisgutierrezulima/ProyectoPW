@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { BACKEND_URL } from '../types/api';
 
 export type CarritoItem = {
   id: number;
@@ -37,7 +38,7 @@ export const CarritoProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Cargar carrito desde el backend
   const cargarCarrito = async () => {
     if (!userId) return;
-    const res = await fetch(`http://localhost:3001/api/carrito/${userId}`);
+    const res = await fetch(`${BACKEND_URL}/api/carrito/${userId}`);
     if (res.ok) {
       setCarrito(await res.json());
     }
@@ -51,7 +52,7 @@ export const CarritoProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Agregar juego al carrito
   const agregarJuego = async (item: CarritoItem) => {
     if (!userId) return;
-    await fetch(`http://localhost:3001/api/carrito/${userId}/agregar`, {
+    await fetch(`${BACKEND_URL}/api/carrito/${userId}/agregar`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(item),
@@ -62,7 +63,7 @@ export const CarritoProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Aumentar cantidad
   const aumentarCantidad = async (id: number) => {
     if (!userId) return;
-    await fetch(`http://localhost:3001/api/carrito/${userId}/aumentar`, {
+    await fetch(`${BACKEND_URL}/api/carrito/${userId}/aumentar`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
@@ -73,7 +74,7 @@ export const CarritoProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Disminuir cantidad
   const disminuirCantidad = async (id: number) => {
     if (!userId) return;
-    await fetch(`http://localhost:3001/api/carrito/${userId}/disminuir`, {
+    await fetch(`${BACKEND_URL}/api/carrito/${userId}/disminuir`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
@@ -84,7 +85,7 @@ export const CarritoProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Eliminar juego
   const eliminarJuego = async (id: number) => {
     if (!userId) return;
-    await fetch(`http://localhost:3001/api/carrito/${userId}/eliminar`, {
+    await fetch(`${BACKEND_URL}/api/carrito/${userId}/eliminar`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
@@ -95,7 +96,7 @@ export const CarritoProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Limpiar carrito
   const limpiarCarrito = async () => {
     if (!userId) return;
-    await fetch(`http://localhost:3001/api/carrito/${userId}/limpiar`, {
+    await fetch(`${BACKEND_URL}/api/carrito/${userId}/limpiar`, {
       method: 'POST',
     });
     await cargarCarrito();

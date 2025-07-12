@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../componentes/Navbar';
+import { BACKEND_URL } from '../types/api';
 
 type DetalleCompra = {
   id: number;
@@ -25,7 +26,7 @@ export default function HistorialCompras() {
 
   useEffect(() => {
     if (!userId) return;
-    fetch(`http://localhost:3001/api/compras/${userId}`)
+    fetch(`${BACKEND_URL}/api/compras/${userId}`)
       .then(res => res.json())
       .then(data => {
         setCompras(data);

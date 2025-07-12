@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BACKEND_URL } from '../types/api';
 
 type EditarJuegoProps = {
   id: number;
@@ -32,7 +33,7 @@ const EditarJuego: React.FC<EditarJuegoProps> = ({ id, onFinish }) => {
     const cargarJuego = async () => {
       setMensaje('');
       setError('');
-      const res = await fetch(`http://localhost:3001/api/juegos/${id}`);
+      const res = await fetch(`${BACKEND_URL}/api/juegos/${id}`);
       if (res.ok) {
         const juego = await res.json();
         setTitulo(juego.titulo);

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '../componentes/Navbar';
 import { useCarrito } from '../context/CarritoContext';
+import { BACKEND_URL } from '../types/api';
 
 interface Reseña {
   id: number;
@@ -38,7 +39,7 @@ export default function GameDetail() {
 
   // Cargar detalles del juego
   useEffect(() => {
-    fetch(`http://localhost:3001/api/juegos/${id}`)
+    fetch(`${BACKEND_URL}/api/juegos/${id}`)
       .then(res => res.json())
       .then(data => {
         setJuego(data);
@@ -49,7 +50,7 @@ export default function GameDetail() {
   // Consultar si el usuario puede dejar reseña
   useEffect(() => {
     if (!userId || !id) return;
-    fetch(`http://localhost:3001/api/juegos/${id}/puede-resenar?userId=${userId}`)
+    fetch(`${BACKEND_URL}/api/juegos/${id}/puede-resenar?userId=${userId}`)
       .then(res => res.json())
       .then(data => setPuedeResenar(data.puedeResenar));
   }, [id, userId]);
@@ -62,7 +63,7 @@ export default function GameDetail() {
       setError('La reseña no puede estar vacía.');
       return;
     }
-    const res = await fetch(`http://localhost:3001/api/juegos/${id}/resena`, {
+    const res = await fetch(`${BACKEND_URL}/api/juegos/${id}/resena`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, texto, estrellas }),
@@ -72,7 +73,7 @@ export default function GameDetail() {
       setEstrellas(5);
       setSuccess('¡Reseña agregada!');
       // Recargar reseñas
-      const nuevas = await fetch(`http://localhost:3001/api/juegos/${id}/resenas`).then(r => r.json());
+      const nuevas = await fetch(`${BACKEND_URL}/api/juegos/${id}/resenas`).then(r => r.json());
       setResenas(nuevas);
     } else {
       setError('No puedes dejar una reseña para este juego.');

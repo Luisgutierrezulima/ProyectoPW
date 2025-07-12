@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../paginas/style.css';
+import { BACKEND_URL } from '../types/api';
+
 
 const Registro: React.FC = () => {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ const Registro: React.FC = () => {
     const email = (e.target as any).email.value;
     const password = (e.target as any).password.value;
 
-    const res = await fetch('http://localhost:3001/api/register', {
+    const res = await fetch(`${BACKEND_URL}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre, email, password }),

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ModalPago from '../componentes/ModalPago';
 import Navbar from '../componentes/Navbar';
 import { useCarrito } from '../context/CarritoContext';
+import { BACKEND_URL } from '../types/api';
 
 export default function Pago() {
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -21,7 +22,7 @@ export default function Pago() {
   const procesarPago = async () => {
     setProcesandoPago(true);
     const userId = localStorage.getItem('userId');
-    const res = await fetch('http://localhost:3001/api/pago', {
+    const res = await fetch(`${BACKEND_URL}/api/pago`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, carrito, email }),

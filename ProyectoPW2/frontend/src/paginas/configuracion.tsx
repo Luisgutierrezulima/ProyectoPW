@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../paginas/style.css';
 import Navbar from '../componentes/Navbar';
+import { BACKEND_URL } from '../types/api';
 
 const Configuracion = () => {
   const [nombre, setNombre] = useState('');
@@ -15,13 +16,12 @@ const Configuracion = () => {
   // Cargar datos actuales del usuario
   useEffect(() => {
     if (!userId) return;
-    fetch(`http://localhost:3001/api/perfil/${userId}`)
+    fetch(`${BACKEND_URL}/api/perfil/${userId}`)
       .then(res => res.json())
       .then(data => {
         setNombre(data.nombre || '');
         setEmail(data.email || '');
-        // Si tienes país en tu modelo, descomenta:
-        // setPais(data.pais || '');
+        
       });
   }, [userId]);
 
@@ -33,7 +33,7 @@ const Configuracion = () => {
       setError('No hay usuario autenticado.');
       return;
     }
-    const res = await fetch(`http://localhost:3001/api/perfil/${userId}`, {
+    const res = await fetch(`${BACKEND_URL}/api/perfil/${userId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

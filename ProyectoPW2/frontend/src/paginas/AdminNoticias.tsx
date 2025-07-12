@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../componentes/Navbar';
+import { BACKEND_URL } from '../types/api';
 
 interface Noticia {
   id: number;
@@ -18,7 +19,7 @@ export default function AdminNoticias() {
 
   // Cargar noticias del backend
   const cargarNoticias = async () => {
-    const res = await fetch('http://localhost:3001/api/noticias');
+    const res = await fetch(`${BACKEND_URL}/api/noticias`);
     setNoticias(await res.json());
   };
 
@@ -33,7 +34,7 @@ export default function AdminNoticias() {
       setError('Completa todos los campos.');
       return;
     }
-    const res = await fetch('http://localhost:3001/api/noticias', {
+    const res = await fetch(`${BACKEND_URL}/api/noticias`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ titulo, contenido }),
@@ -51,7 +52,7 @@ export default function AdminNoticias() {
   const eliminarNoticia = async (id: number) => {
     setMensaje('');
     setError('');
-    const res = await fetch(`http://localhost:3001/api/noticias/${id}`, { method: 'DELETE' });
+    const res = await fetch(`${BACKEND_URL}/api/noticias/${id}`, { method: 'DELETE' });
     if (res.ok) {
       setMensaje('Noticia eliminada.');
       cargarNoticias();
@@ -73,7 +74,7 @@ export default function AdminNoticias() {
       setError('Completa todos los campos.');
       return;
     }
-    const res = await fetch(`http://localhost:3001/api/noticias/${modoEdicion}`, {
+    const res = await fetch(`${BACKEND_URL}/api/noticias/${modoEdicion}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ titulo, contenido }),

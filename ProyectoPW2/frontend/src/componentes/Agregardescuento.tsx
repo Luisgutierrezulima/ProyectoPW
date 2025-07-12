@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BACKEND_URL } from '../types/api';
 
 type AgregarDescuentoProps = {
   id: number;
@@ -18,14 +19,14 @@ const AgregarDescuento: React.FC<AgregarDescuentoProps> = ({ id, onFinish }) => 
       setError('Completa el porcentaje.');
       return;
     }
-    const resJuego = await fetch(`http://localhost:3001/api/juegos/${id}`);
+    const resJuego = await fetch(`${BACKEND_URL}/api/juegos/${id}`);
     if (!resJuego.ok) {
       setError('No se encontró el juego con ese ID.');
       return;
     }
     const juego = await resJuego.json();
     const nuevoPrecio = juego.precio - (juego.precio * (parseFloat(porcentaje) / 100));
-    const res = await fetch(`http://localhost:3001/api/juegos/${id}`, {
+    const res = await fetch(`${BACKEND_URL}/api/juegos/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
