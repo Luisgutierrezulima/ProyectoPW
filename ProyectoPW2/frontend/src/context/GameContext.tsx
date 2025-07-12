@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { BACKEND_URL } from '../types/api';
 
 export type Reseña = {
   id: number;
@@ -38,7 +39,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Cargar juegos desde el backend
   const cargarJuegos = async () => {
-    const res = await fetch("http://localhost:3001/api/juegos");
+    const res = await fetch(`${BACKEND_URL}/api/juegos`);
     const data = await res.json();
     setJuegos(data);
   };
