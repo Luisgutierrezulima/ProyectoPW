@@ -29,6 +29,7 @@ import Configjuegos from './paginas/Configjuegos.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <BrowserRouter basename='/ProyectoPW/'>
     <GameProvider>
     <CarritoProvider>
       <BrowserRouter>
@@ -59,5 +60,6 @@ createRoot(document.getElementById('root')!).render(
       </BrowserRouter>
     </CarritoProvider>
     </GameProvider>
+    </BrowserRouter>
   </StrictMode>
 );
