@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BACKEND_URL } from '../types/api';
 
 type EliminarJuegoProps = {
   id: number;
@@ -12,7 +13,7 @@ const EliminarJuego: React.FC<EliminarJuegoProps> = ({ id, onFinish }) => {
   const handleEliminar = async () => {
     setMensaje('');
     setError('');
-    const res = await fetch(`http://localhost:3001/api/juegos/${id}`, {
+    const res = await fetch(`${BACKEND_URL}/api/juegos/${id}`, {
       method: 'DELETE',
     });
     if (res.ok) {

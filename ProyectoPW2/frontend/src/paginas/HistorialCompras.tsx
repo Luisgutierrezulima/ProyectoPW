@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Navbar from '../componentes/Navbar';
 import { BACKEND_URL } from '../types/api';
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BACKEND_URL } from '../types/api';
 
 type AgregarJuegoProps = {
   onFinish: () => void;
@@ -34,7 +35,7 @@ const Agregarjuego: React.FC<AgregarJuegoProps> = ({ onFinish }) => {
       setError('Completa todos los campos obligatorios.');
       return;
     }
-    const res = await fetch('http://localhost:3001/api/juegos', {
+    const res = await fetch(`${BACKEND_URL}/api/juegos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

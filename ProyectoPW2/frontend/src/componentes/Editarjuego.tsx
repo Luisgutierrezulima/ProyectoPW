@@ -62,7 +62,7 @@ const EditarJuego: React.FC<EditarJuegoProps> = ({ id, onFinish }) => {
       setError('Completa todos los campos obligatorios.');
       return;
     }
-    const res = await fetch(`http://localhost:3001/api/juegos/${id}`, {
+    const res = await fetch(`${BACKEND_URL}/api/juegos/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

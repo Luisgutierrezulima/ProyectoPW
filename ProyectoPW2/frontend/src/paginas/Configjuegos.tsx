@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaPercent } from 'react-icons/fa';
 import Navbar from '../componentes/Navbar';
 import Agregarjuego from '../componentes/Agregarjuego';
 import EditarJuego from '../componentes/Editarjuego';
 import EliminarJuego from '../componentes/Eliminarjuego';
 import AgregarDescuento from '../componentes/Agregardescuento';
+import { BACKEND_URL } from '../types/api';
 
 type Juego = {
   id: number;
@@ -22,7 +23,7 @@ const Configjuegos = () => {
   // Cargar juegos del backend
   const cargarJuegos = async () => {
     setLoading(true);
-    const res = await fetch('http://localhost:3001/api/juegos');
+    const res = await fetch(`${BACKEND_URL}/api/juegos`);
     const data = await res.json();
     setJuegos(data);
     setLoading(false);

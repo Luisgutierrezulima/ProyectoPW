@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../paginas/style.css';
 
-import React from 'react';
+
 import Navbar from '../componentes/Navbar';
 import { useCarrito } from '../context/CarritoContext';
 import { useNavigate } from 'react-router-dom';
