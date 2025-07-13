@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../paginas/style.css';
+import { BACKEND_URL } from '../types/api';
 
 const NuevaContra: React.FC = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const NuevaContra: React.FC = () => {
   const [nuevaContra, setNuevaContra] = useState('');
   const [confirmarContra, setConfirmarContra] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+ const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMensaje('');
     setError('');
@@ -26,12 +27,24 @@ const NuevaContra: React.FC = () => {
       return;
     }
 
-    // Llamar a backend para validar el código y cambiar la contraseña
-    // Simulación:
-    setMensaje('¡Contraseña reestablecida!');
-    setTimeout(() => {
-      navigate('/login');
-    }, 1500);
+    // Aquí conectas con el backend
+    const res = await fetch(`${BACKEND_URL}/api/recuperar-contrasena`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: codigo, // Aquí debes poner el email del usuario, no el código
+        nuevaContrasena: nuevaContra
+      }),
+    });
+    const data = await res.json();
+    if (res.ok && data.ok) {
+      setMensaje('¡Contraseña reestablecida!');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+    } else {
+      setError(data.error || 'Error al reestablecer la contraseña.');
+    }
   };
 
   return (

@@ -393,6 +393,24 @@ app.get('/api/juegos/:juegoId/resenas', async (req: Request, res: Response) => {
   res.json(resenasConUsuario);
 });
 
+app.post('/api/recuperar-contrasena', async (req: Request, res: Response) => {
+  const { email, nuevaContrasena } = req.body;
+  if (!email || !nuevaContrasena) {
+    res.status(400).json({ error: 'Faltan campos' });
+    return;
+  }
+  const usuario = await prisma.usuario.findUnique({ where: { email } });
+  if (!usuario) {
+    res.status(404).json({ error: 'Usuario no encontrado' });
+    return;
+  }
+  await prisma.usuario.update({
+    where: { email },
+    data: { password: nuevaContrasena }
+  });
+  res.json({ ok: true, mensaje: 'Contraseña actualizada correctamente' });
+});
+
 // Agregar aquí más endpoints, app.listen siempre debe ir al FINAL!!!!
 
 app.listen(3001, () => {
