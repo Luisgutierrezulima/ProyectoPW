@@ -101,6 +101,15 @@ app.get('/api/juegos/:id', async (req: Request, res: Response) => {
   res.json(juego);
 });
 
+app.get('/api/juegos/buscar/:nombre', async (req: Request, res: Response) => {
+  const nombre = req.params.nombre.toLowerCase();
+  const juegos = await prisma.juego.findMany();
+  const filtrados = juegos.filter(j =>
+    j.titulo.toLowerCase().includes(nombre)
+  );
+  res.json(filtrados);
+});
+
 app.post('/api/juegos', async (req: Request, res: Response) => {
   const { titulo, descripcion, estrellas, imagen, trailer, precio, oferta, plataforma, categoria } = req.body;
   if (!titulo || !descripcion || !imagen || !trailer || !precio || !plataforma || !categoria) {
